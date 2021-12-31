@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.8)
 
 project(cli-cmake LANGUAGES CXX)
 
+set(CMAKE_C_STANDARD 14)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 function(cliMain)
     option(CLI_BuildExamples "Build the examples." OFF)
     option(CLI_BuildTests "Build the unit tests." OFF)
-    option(CLI_UseBoostAsio "Use the boost asio library." ON)
     option(CLI_UseStandaloneAsio "Use the standalone asio library." OFF)
 
     if(WIN32)
@@ -47,10 +50,6 @@ function(cliMain)
         )
 
     target_link_libraries(thirdparty_cli INTERFACE Threads::Threads)
-    if (CLI_UseBoostAsio)
-        target_link_libraries(thirdparty_cli INTERFACE thirdparty_boost)
-        target_compile_definitions(thirdparty_cli INTERFACE BOOST_ASIO_NO_DEPRECATED=1)
-    endif()
 
     if (CLI_UseStandaloneAsio)
         add_library(standalone_asio INTERFACE IMPORTED)
@@ -61,8 +60,6 @@ function(cliMain)
         # alternative way:
         # target_include_directories(cli SYSTEM INTERFACE ${STANDALONE_ASIO_INCLUDE_PATH})
     endif()
-
-    target_compile_features(thirdparty_cli INTERFACE cxx_std_14)
 
     # Examples
     if (CLI_BuildExamples)
